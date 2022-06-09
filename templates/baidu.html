@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+    <title>剪切板翻译</title>
+    <script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/md5.min.js') }}"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        var buffer = undefined;
+        var lastBuffer = undefined;
+        axios.default.baseURL = window.location.origin;
+        axios.default.timeout = 2000;
+        window.onload = () => {
+            setInterval(() => {
+                axios.get('/translate/').then(data => {
+                    lastBuffer = data.data.trans_result[0].dst;
+                })
+                if (lastBuffer != undefined && lastBuffer != buffer) {
+                    console.log(lastBuffer);
+                    document.getElementById("text").innerText = lastBuffer
+                    buffer = lastBuffer
+                }
+            }, 800)
+        }
+    </script>
+</head>
+<style>
+    @font-face {
+        font-family: OPPO;
+        src: url("{{ url_for('static', filename='font/OPPOSans-R.ttf') }}");
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    #container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--bg);
+        transition: background-color ease-in-out .5s;
+    }
+
+    #text-block {
+        width: 80vw;
+    }
+
+    #text {
+        width: 100%;
+        text-align: center;
+        font-size: 3em;
+        color: var(--text);
+        transition: color ease-in-out .5s;
+        font-family: OPPO;
+    }
+</style>
+
+<body>
+    <div id="container" style="--bg:#fff;--text:#000;">
+        <div id="text-block">
+            <div id="text">翻译</div>
+        </div>
+    </div>
+</body>
+<script>
+    var conatiner = document.getElementById("container");
+    var isBlack = false
+    conatiner.onclick = () => {
+        if (isBlack) {
+            conatiner.style.setProperty("--bg", '#000');
+            conatiner.style.setProperty("--text", '#fff');
+            isBlack = !isBlack;
+        } else {
+            conatiner.style.setProperty("--bg", '#fff');
+            conatiner.style.setProperty("--text", '#000');
+            isBlack = !isBlack;
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+    <title>Document</title>
+    <script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script>
+        var buffer = undefined;
+        var lastBuffer = undefined;
+        axios.default.baseURL = window.location.origin;
+        window.onload = () => {
+            setInterval(() => {
+                axios.get('/clip/',{timeout:2000}).then(data => {
+                    lastBuffer = data.data.tgt;
+                })
+                if (lastBuffer != undefined && lastBuffer != buffer) {
+                    console.log(lastBuffer);
+                    document.getElementById("text").innerText = lastBuffer
+                    buffer = lastBuffer
+                }
+            }, 800)
+        }
+    </script>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin:0;
+    }
+    body{
+        width: 100vw;
+        height: 100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+    .text-block{
+        width: 80vw;
+    }
+    #text{
+        width: 100%;
+        text-align: center;
+        font-size: 3em;
+    }
+</style>
+<body>
+    <div class="text-block">
+        <div id="text">翻译</div>
+    </div>
+</body>
+
+</html>
